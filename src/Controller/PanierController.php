@@ -86,9 +86,9 @@ class PanierController extends AbstractController
 
     //supprimer 1 livre (quantité) dans le panier 
     /**
-     * @Route("/panier/enlever/{id}", name="panier_add")
+     * @Route("/panier/enlever/{id}", name="panier_delete")
      */
-    public function delete(Book $book): Response
+    public function delete(Book $book, SessionInterface $sessionInterface): Response
     {
         // 1. On récupère le panier
         $cart = $sessionInterface->get('cart');
@@ -119,19 +119,7 @@ class PanierController extends AbstractController
 
         // 6. On redirige l'utilisateur vers la page index du panier
         return $this->redirectToRoute('panier_index');
- //3
-    $cart['elements'][$bookId]['quantity'] = $cart['elements'][$bookId]['quantity'] - 1;
-
-//4 
-if ($cart['elements'][$bookId]['quantity'] === 0){
-    unset($cart['elements'][$bookId]);
-}
-
-//5 
-$sessionInterface->set('cart', $cart);
-
-//6
-return $this->redirectToRoute('panier_index');
+ 
     }
 
    
