@@ -132,5 +132,36 @@ class PanierController extends AbstractController
         return $this->redirectToRoute('panier_index');
     }
 
+    //supprimer une ligne du panier
+    /**
+     * @Route("/panier/supprimer/{id}", name="panier_supprimer")
+     */
+    public function removeLine(Book $book, SessionInterface $sessionInterface): Response
+    {
+        // 1. On récupère le panier
+        $cart = $sessionInterface->get('cart');
+        if ($cart === null){
+            $cart= [
+                'total' =>0.0,
+                'elements' => []
+            ];
+        }
+        // 2. Si le livre n'est pas dans le panier on ne fait rien
+        $bookId = $book->getId();
+        if (!isset($cart['elements'][$bookId])){
+            return $this->redirectToRoute('panier_index');
+        }
+
+        // 3. On met à jour le total et on sucre la ligne (sucre = supprimer)
+        $cart['total'] = $cart['total'] - $book->getPrice() * $cart['elements'][$bookId]['quantity'];
+        unset($cart['elements'][$bookId]);
+
+        // 4. On enregistre le panier
+        $sessionInterface->set('cart', $cart);
+
+        // 5. On redirige
+        return $this->redirectToRoute('panier_index');
+    }
+
     //valider un panier
 }

@@ -6,7 +6,12 @@
 
 <h1>Panier</h1>
 
+<div>
+    <a href="{{ path('panier_vider') }}">Vider le panier</a>
+</div>
+<br>
 <div>Total du panier {{ cart.total }} €</div>
+
 
 <table>
     <tr>
@@ -22,6 +27,9 @@
             <td>{{ element.book.titre }}</td>
             <td>{{ element.book.price }}</td>
             <td><a href="{{ path('panier_delete', {'id': element.book.id}) }}">-</a> {{ element.quantity }} <a href="{{ path('panier_add', {'id': element.book.id}) }}">+</a></td>
+
+            <td><a href="{{ path('panier_supprimer', {'id': element.book.id}) }}">Supprimer</a></td>
+
         </tr>
     {% else %}
         <tr>
