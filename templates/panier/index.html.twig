@@ -21,7 +21,7 @@
             <td>{{ element.book.id }}</td>
             <td>{{ element.book.titre }}</td>
             <td>{{ element.book.price }}</td>
-            <td>{{ element.quantity }}</td>
+            <td><a href="{{ path('panier_delete', {'id': element.book.id}) }}">-</a> {{ element.quantity }} <a href="{{ path('panier_add', {'id': element.book.id}) }}">+</a></td>
         </tr>
     {% else %}
         <tr>

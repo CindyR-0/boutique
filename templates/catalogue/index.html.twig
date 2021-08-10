@@ -12,6 +12,7 @@
                 <th>Titre</th>
                 <th>Description</th>
                 <th>Price</th>
+                <th>...</th>
             </tr>
         </thead>
         <tbody>
@@ -20,7 +21,11 @@
                 <td>{{ book.id }}</td>
                 <td>{{ book.titre }}</td>
                 <td>{{ book.description }}</td>
+
                 <td>{{ book.price }}</td>
+                <td>
+                    <a href="{{ path('panier_add', {'id': book.id}) }}">Ajouter au panier</a>
+                </td>
             </tr>
         {% else %}
             <tr>

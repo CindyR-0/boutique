@@ -20,7 +20,7 @@ class PanierController extends AbstractController
         if ($cart === null){
             $cart= [
                 'total' =>0.0,
-                'infoProduits' => []
+                'elements' => []
             ];
         }
 
@@ -45,7 +45,7 @@ class PanierController extends AbstractController
         if ($cart === null){
             $cart= [
                 'total' =>0.0,
-                'infoProduits' => []
+                'elements' => []
             ];
         }
         // plus besoin du foreach avec le tableau associatif
@@ -95,7 +95,7 @@ class PanierController extends AbstractController
         if ($cart === null){
             $cart= [
                 'total' =>0.0,
-                'infoProduits' => []
+                'elements' => []
             ];
         }
 
@@ -122,7 +122,15 @@ class PanierController extends AbstractController
  
     }
 
-   
     //vider un panier 
+    /**
+     * @Route("/panier/vider", name="panier_vider")
+     */
+    public function clear(SessionInterface $sessionInterface): Response
+    {
+        $sessionInterface->remove('cart'); 
+        return $this->redirectToRoute('panier_index');
+    }
+
     //valider un panier
 }
