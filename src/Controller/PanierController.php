@@ -13,10 +13,19 @@ class PanierController extends AbstractController
     /**
      * @Route("/panier", name="panier_index")
      */
-    public function index(): Response
+    public function index(SessionInterface $sessionInterface): Response
     {
+        // 1. On récupère le panier s'il existe, sinon on prend un nouveau
+        $cart = $sessionInterface->get('cart');
+        if ($cart === null){
+            $cart= [
+                'total' =>0.0,
+                'infoProduits' => []
+            ];
+        }
+
         return $this->render('panier/index.html.twig', [
-            'controller_name' => 'PanierController',
+            'cart' => $cart
         ]);
     }
 
@@ -52,7 +61,7 @@ class PanierController extends AbstractController
         // }
         
         // 2. On ajoute le book s'il n'y en a pas
-        $bookId = $book-getId();
+        $bookId = $book->getId();
         if (!isset($cart['elements'][$bookId])){ //si le bookId n'existe pas dans elements dans cart je l'ajoute dans le panier (id = clé element)
              
             $cart['elements'][$bookId] = [
@@ -73,13 +82,59 @@ class PanierController extends AbstractController
         // 5. On redirige l'utilisateur vers la page index du panier
         return $this->redirectToRoute('panier_index'); 
 
-
-            //si le produit n'a pas été trouvé
-                //on ajouter le produit dans le panier
-                //on met à jour le total du panier
     }
 
-    //supprimer 1 livre dans le panier 
+    //supprimer 1 livre (quantité) dans le panier 
+    /**
+     * @Route("/panier/enlever/{id}", name="panier_add")
+     */
+    public function delete(Book $book): Response
+    {
+        // 1. On récupère le panier
+        $cart = $sessionInterface->get('cart');
+        if ($cart === null){
+            $cart= [
+                'total' =>0.0,
+                'infoProduits' => []
+            ];
+        }
+
+        // 2. Si le livre n'est pas dans le panier, on ne fait rien 
+        $bookId = $book->getId();
+        if (!isset($cart['elements'][$bookId])){
+            return $this->redirectToRoute('panier_index');
+        }
+
+        // 3. Il existe, alors on met à jour les quantités
+        $cart['total'] = $cart['total'] - $book->getPrice();
+        $cart['elements'][$bookId]['quantity'] = $cart['elements'][$bookId]['quantity'] - 1;
+
+        // 4. Si la quantité est de 0, on l'enlève complètement du panier
+        if ($cart['elements'][$bookId]['quantity'] <= 0){
+            unset($cart['elements'][$bookId]);
+        }
+
+        // 5. On sauvegarde le panier
+        $sessionInterface->set('cart', $cart); 
+
+        // 6. On redirige l'utilisateur vers la page index du panier
+        return $this->redirectToRoute('panier_index');
+ //3
+    $cart['elements'][$bookId]['quantity'] = $cart['elements'][$bookId]['quantity'] - 1;
+
+//4 
+if ($cart['elements'][$bookId]['quantity'] === 0){
+    unset($cart['elements'][$bookId]);
+}
+
+//5 
+$sessionInterface->set('cart', $cart);
+
+//6
+return $this->redirectToRoute('panier_index');
+    }
+
+   
     //vider un panier 
     //valider un panier
 }
