@@ -16,14 +16,15 @@ class PanierController extends AbstractController
      */
     public function index(CartService $cartService): Response
     {
+        /*
         // 1. On récupère le panier s'il existe, sinon on prend un nouveau (version avant la création du service)
-        // $cart = $sessionInterface->get('cart');
-        // if ($cart === null){
-        //     $cart= [
-        //         'total' =>0.0,
-        //         'elements' => []
-        //     ];
-        // }
+        $cart = $sessionInterface->get('cart');
+        if ($cart === null){
+            $cart= [
+                'total' =>0.0,
+                'elements' => []
+            ];
+        } */
 
         $cart = $cartService->get(); //get du CartService
         return $this->render('panier/index.html.twig', [
@@ -35,55 +36,55 @@ class PanierController extends AbstractController
     /**
      * @Route("/panier/ajouter/{id}", name="panier_add")
      */
-    public function add(Book $book, SessionInterface $sessionInterface): Response
+    public function add(Book $book, CartService $cartService): Response
     { //session interface permet la recuperation du panier dans l'interface
         // $cart = $sessionInterface->get('cart', [
         //     'total' => 0.0,
         //     'infoProduits' => []
         // ]);//récuperation du panier de la session
 
-        //version avant la création du service
-        // // 1. On récupère le panier s'il existe, sinon on prend un nouveau
-        // $cart = $sessionInterface->get('cart');
-        // if ($cart === null){
-        //     $cart= [
-        //         'total' =>0.0,
-        //         'elements' => []
-        //     ];
+        /* version avant la création du service
+        // 1. On récupère le panier s'il existe, sinon on prend un nouveau
+        $cart = $sessionInterface->get('cart');
+        if ($cart === null){
+            $cart= [
+                'total' =>0.0,
+                'elements' => []
+            ];
+        }
+        // plus besoin du foreach avec le tableau associatif
+        // //on parcours l'ensemble des infos dans le panier
+        // foreach($cart['infoProduits'] as $element) {
+        //     //si l'info se trouve être le produit à ajouter 
+        //     if($element['book']->getId() === $book->getId()){
+        //         //on incrémenter la quantité
+        //         ++$element['quantity'];
+        //         //on met  a jour le total du panier
+        //         $cart['total'] = $cart['total'] + $book->getPrice();
+        //     }
         // }
-        // // plus besoin du foreach avec le tableau associatif
-        // // //on parcours l'ensemble des infos dans le panier
-        // // foreach($cart['infoProduits'] as $element) {
-        // //     //si l'info se trouve être le produit à ajouter 
-        // //     if($element['book']->getId() === $book->getId()){
-        // //         //on incrémenter la quantité
-        // //         ++$element['quantity'];
-        // //         //on met  a jour le total du panier
-        // //         $cart['total'] = $cart['total'] + $book->getPrice();
-        // //     }
-        // // }
         
-        // // 2. On ajoute le book s'il n'y en a pas
-        // $bookId = $book->getId();
-        // if (!isset($cart['elements'][$bookId])){ //si le bookId n'existe pas dans elements dans cart je l'ajoute dans le panier (id = clé element)
+        // 2. On ajoute le book s'il n'y en a pas
+        $bookId = $book->getId();
+        if (!isset($cart['elements'][$bookId])){ //si le bookId n'existe pas dans elements dans cart je l'ajoute dans le panier (id = clé element)
              
-        //     $cart['elements'][$bookId] = [
-        //         'book' => $book,
-        //         'quantity' => 0
-        //     ];
-        // }
+            $cart['elements'][$bookId] = [
+                'book' => $book,
+                'quantity' => 0
+            ];
+        }
 
-        // // 3. On incrémente la quantityé est on recalcule le prix total
-        // $cart['elements'][$bookId]['quantity'] = $cart['elements'][$bookId]['quantity'] + 1; //ajoute une quantité
-        // // équivalent de ++$cart['elements'][$bookId]['quantity];
+        // 3. On incrémente la quantityé est on recalcule le prix total
+        $cart['elements'][$bookId]['quantity'] = $cart['elements'][$bookId]['quantity'] + 1; //ajoute une quantité
+        // équivalent de ++$cart['elements'][$bookId]['quantity];
 
-        // $cart['total'] = $cart['total'] + $book->getPrice(); //recalcule du total : total_panier = total_panier + prix_du_livre (récupéré avec le getPrice);
+        $cart['total'] = $cart['total'] + $book->getPrice(); //recalcule du total : total_panier = total_panier + prix_du_livre (récupéré avec le getPrice);
 
-        // // 4. On sauvegarde le nouveau panier
-        // $sessionInterface->set('cart', $cart); 
+        // 4. On sauvegarde le nouveau panier
+        $sessionInterface->set('cart', $cart); 
 
-        // // 5. On redirige l'utilisateur vers la page index du panier
-        // return $this->redirectToRoute('panier_index'); 
+        // 5. On redirige l'utilisateur vers la page index du panier
+        return $this->redirectToRoute('panier_index'); */
 
         $cartService->add($book);
         return $this->redirectToRoute('panier_index');
@@ -94,42 +95,42 @@ class PanierController extends AbstractController
     /**
      * @Route("/panier/enlever/{id}", name="panier_delete")
      */
-    public function delete(Book $book, SessionInterface $sessionInterface): Response
+    public function delete(Book $book, CartService $cartService): Response
     {
-        // version avant la création du CartService
-        // // 1. On récupère le panier
-        // $cart = $sessionInterface->get('cart');
-        // if ($cart === null){
-        //     $cart= [
-        //         'total' =>0.0,
-        //         'elements' => []
-        //     ];
-        // }
+        /* version avant la création du CartService
+        // 1. On récupère le panier
+        $cart = $sessionInterface->get('cart');
+        if ($cart === null){
+            $cart= [
+                'total' =>0.0,
+                'elements' => []
+            ];
+        }
 
-        // // 2. Si le livre n'est pas dans le panier, on ne fait rien 
-        // $bookId = $book->getId();
-        // if (!isset($cart['elements'][$bookId])){
-        //     return $this->redirectToRoute('panier_index');
-        // }
+        2. Si le livre n'est pas dans le panier, on ne fait rien 
+        $bookId = $book->getId();
+        if (!isset($cart['elements'][$bookId])){
+            return $this->redirectToRoute('panier_index');
+        }
 
-        // // 3. Il existe, alors on met à jour les quantités
-        // $cart['total'] = $cart['total'] - $book->getPrice();
-        // $cart['elements'][$bookId]['quantity'] = $cart['elements'][$bookId]['quantity'] - 1;
+        // 3. Il existe, alors on met à jour les quantités
+        $cart['total'] = $cart['total'] - $book->getPrice();
+        $cart['elements'][$bookId]['quantity'] = $cart['elements'][$bookId]['quantity'] - 1;
 
-        // // 4. Si la quantité est de 0, on l'enlève complètement du panier
-        // if ($cart['elements'][$bookId]['quantity'] <= 0){
-        //     unset($cart['elements'][$bookId]);
-        // }
+        // 4. Si la quantité est de 0, on l'enlève complètement du panier
+        if ($cart['elements'][$bookId]['quantity'] <= 0){
+            unset($cart['elements'][$bookId]);
+        }
 
-        // // 5. On sauvegarde le panier
-        // $sessionInterface->set('cart', $cart); 
+        // 5. On sauvegarde le panier
+        $sessionInterface->set('cart', $cart); 
 
-        // // 6. On redirige l'utilisateur vers la page index du panier
-        // return $this->redirectToRoute('panier_index');
+        // 6. On redirige l'utilisateur vers la page index du panier
+        return $this->redirectToRoute('panier_index');*/
 
         //avec le service
-        $cartService->delete();
-        return $this->redirectToRoute('panier_index');
+        $cartService->delete($book);
+        return $this->redirectToRoute('panier_index'); 
  
     }
 
@@ -137,11 +138,11 @@ class PanierController extends AbstractController
     /**
      * @Route("/panier/vider", name="panier_vider")
      */
-    public function clear(SessionInterface $sessionInterface): Response
+    public function clear(CartService $cartService): Response
     {
-        // avant la création du service
-        // $sessionInterface->remove('cart'); 
-        // return $this->redirectToRoute('panier_index');
+        /* avant la création du service
+        $sessionInterface->remove('cart'); 
+        return $this->redirectToRoute('panier_index');*/
 
         //avec le service
         $cartService->clear();
@@ -152,32 +153,32 @@ class PanierController extends AbstractController
     /**
      * @Route("/panier/supprimer/{id}", name="panier_supprimer")
      */
-    public function removeLine(Book $book, SessionInterface $sessionInterface): Response
+    public function removeLine(Book $book, CartService $cartService): Response
     {
-         // avant la création du service
+         /* avant la création du service
         // 1. On récupère le panier
-        // $cart = $sessionInterface->get('cart');
-        // if ($cart === null){
-        //     $cart= [
-        //         'total' =>0.0,
-        //         'elements' => []
-        //     ];
-        // }
-        // // 2. Si le livre n'est pas dans le panier on ne fait rien
-        // $bookId = $book->getId();
-        // if (!isset($cart['elements'][$bookId])){
-        //     return $this->redirectToRoute('panier_index');
-        // }
+        $cart = $sessionInterface->get('cart');
+        if ($cart === null){
+            $cart= [
+                'total' =>0.0,
+                'elements' => []
+            ];
+        }
+        // 2. Si le livre n'est pas dans le panier on ne fait rien
+        $bookId = $book->getId();
+        if (!isset($cart['elements'][$bookId])){
+            return $this->redirectToRoute('panier_index');
+        }
 
-        // // 3. On met à jour le total et on sucre la ligne (sucre = supprimer)
-        // $cart['total'] = $cart['total'] - $book->getPrice() * $cart['elements'][$bookId]['quantity'];
-        // unset($cart['elements'][$bookId]);
+        // 3. On met à jour le total et on sucre la ligne (sucre = supprimer)
+        $cart['total'] = $cart['total'] - $book->getPrice() * $cart['elements'][$bookId]['quantity'];
+        unset($cart['elements'][$bookId]);
 
-        // // 4. On enregistre le panier
-        // $sessionInterface->set('cart', $cart);
+        // 4. On enregistre le panier
+        $sessionInterface->set('cart', $cart);
 
-        // // 5. On redirige
-        // return $this->redirectToRoute('panier_index');
+        // 5. On redirige
+         return $this->redirectToRoute('panier_index');*/
 
         //avec le service
         $cartService->removeLine();

@@ -53,7 +53,7 @@ class CartService
 
     }
 
-    public function delete(Book $book)
+    public function delete(Book $book): void
     {
         // 1. On récupère le panier
         $cart = $this->get();
@@ -61,7 +61,7 @@ class CartService
         // 2. Si le livre n'est pas dans le panier, on ne fait rien 
         $bookId = $book->getId();
         if (!isset($cart['elements'][$bookId])){
-            return $this->redirectToRoute('panier_index');
+            return;
         }
 
         // 3. Il existe, alors on met à jour les quantités
@@ -80,7 +80,7 @@ class CartService
 
     public function clear()
     {
-        $this->sessionInterface->remove();
+        $this->sessionInterface->remove('cart');
     }
 
     public function removeLine()
@@ -91,7 +91,7 @@ class CartService
        // 2. Si le livre n'est pas dans le panier on ne fait rien
        $bookId = $book->getId();
        if (!isset($cart['elements'][$bookId])){
-           return $this->redirectToRoute('panier_index');
+           return;
        }
 
        // 3. On met à jour le total et on sucre la ligne (sucre = supprimer)
