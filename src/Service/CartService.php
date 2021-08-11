@@ -83,7 +83,7 @@ class CartService
         $this->sessionInterface->remove('cart');
     }
 
-    public function removeLine()
+    public function removeLine(Book $book)
     {
        // 1. On récupère le panier
        $cart = $this->get();

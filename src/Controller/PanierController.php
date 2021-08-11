@@ -6,7 +6,6 @@ use App\Entity\Book;
 use App\Service\CartService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class PanierController extends AbstractController
@@ -16,8 +15,8 @@ class PanierController extends AbstractController
      */
     public function index(CartService $cartService): Response
     {
-        /*
-        // 1. On récupère le panier s'il existe, sinon on prend un nouveau (version avant la création du service)
+        /* version avant la création du service
+        // 1. On récupère le panier s'il existe, sinon on prend un nouveau 
         $cart = $sessionInterface->get('cart');
         if ($cart === null){
             $cart= [
@@ -26,6 +25,7 @@ class PanierController extends AbstractController
             ];
         } */
 
+        //avec le service
         $cart = $cartService->get(); //get du CartService
         return $this->render('panier/index.html.twig', [
             'cart' => $cart
@@ -181,7 +181,7 @@ class PanierController extends AbstractController
          return $this->redirectToRoute('panier_index');*/
 
         //avec le service
-        $cartService->removeLine();
+        $cartService->removeLine($book);
         return $this->redirectToRoute('panier_index');
     }
 
