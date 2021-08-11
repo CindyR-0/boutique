@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Book;
 use App\Service\CartService;
+use App\Service\PaymentService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -186,4 +187,14 @@ class PanierController extends AbstractController
     }
 
     //valider un panier
+    /**
+     * @Route("/panier/valider", name="panier_validate")
+     */
+    public function validate(PaymentService $paymentService): Response
+    {
+       $stripeSessionId = $paymentService->create();
+       return $this->render('panier/redirect.html.twig', [
+           'stripeSessionId' => $stripeSessionId
+       ]);
+    }
 }

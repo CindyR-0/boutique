@@ -11,7 +11,7 @@ class PaymentController extends AbstractController
     /**
      * @Route("/payment/succes/{stripeSessionId}", name="payment_succes")
      */
-    public function succes(string $stripSessionId): Response
+    public function succes(string $stripeSessionId): Response
     { //
         return $this->render('payment/succes.html.twig', [
             'controller_name' => 'PaymentController',
@@ -21,7 +21,7 @@ class PaymentController extends AbstractController
     /**
      * @Route("/payment/failure/{stripeSessionId}", name="payment_failure")
      */
-    public function failure(string $stripSessionId): Response
+    public function failure(string $stripeSessionId): Response
     {
         return $this->render('payment/failure.html.twig', [
             'controller_name' => 'PaymentController',

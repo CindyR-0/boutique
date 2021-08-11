@@ -21,18 +21,55 @@ class PaymentService
         // 1. succes URL 
         // http://localhost/Symfony/code/boutique/public/payment/succes
         $protocol = 'http';
-        if (isset($_SERVER['HTTPS'])){ //si dans l'URL c'est ecrit HTTPs alors le protocol prend cette valeur
+        if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']){ //si dans l'URL c'est ecrit HTTPs alors le protocol prend cette valeur
             $protocol = 'https';
         }
         $serverName = $_SERVER['SERVER_NAME'];
-        $succesUrl = $protocol . '://' . $serverName . '/payment/succes/{CHECKOUT_SESSION_ID}';
+        $succesUrl = $protocol . '://' . $serverName . '/Symfony/code/boutique/public/payment/succes/{CHECKOUT_SESSION_ID}';
         // $protocol = http / $serverName = localhost/Symfony/code/boutique/public/ 
 
         // 2. cancel URL 
         // http://localhost/Symfony/code/boutique/public/payment/failure
-        $cancelUrl = $protocol . '://' . $serverName . '/payment/failure/{CHECKOUT_SESSION_ID}';
+        $cancelUrl = $protocol . '://' . $serverName . '/Symfony/code/boutique/public/payment/failure/{CHECKOUT_SESSION_ID}';
 
 
         // 3. Elements (détails du panier)
+        /**
+         * 1 item : (array associatif)
+         * amout : le prix de l'article (float)
+         * quantity : la quantité de l'article (integer)
+         * currency (type de monnaie) : 'eur'(string)
+         * name : le nom de l'article (string)
+         */
+
+        $items = []; // un array de array associatif
+        $panier = $this->cartService->get(); // récupère le panier
+        foreach ($panier['elements'] as $element) // boucle qui parcours les éléments du panier 
+        {
+            // $element (structure): 
+            /*
+            [
+                'book' => $book, (représente un objet)
+                'quantity' => 2
+            ]*/
+            $item = [
+                'amount' => $element['book']->getPrice() * 100, //valeur en centime, pour avoir un prix en euro il faut multiplier par 100 ex : en bdd 12€ => stripe 12 centimes * 100 = 1200 centimes d'euros
+                'quantity' => $element['quantity'],
+                'currency' => 'eur',
+                'name' => $element['book']->getTitre()
+            ];
+
+            //array_push($items, $item); //ajoute au tableau items un item
+            $items[] = $item; //equivalet du array_push
+        }
+
+        $sessionId = $this->stripe->checkout->sessions->create([
+            'success_url' => $succesUrl,
+            'cancel_url' => $cancelUrl,
+            'payment_method_types' => ['card'],
+            'mode' => 'payment',
+            'line_items' => $items
+        ]);
+        return $sessionId->id;
     }
 }
