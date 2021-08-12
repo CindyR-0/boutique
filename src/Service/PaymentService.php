@@ -19,13 +19,13 @@ class PaymentService
     public function create(): string
     {
         // 1. succes URL 
-        // http://localhost/Symfony/code/boutique/public/payment/succes
+        // http://localhost/Symfony/code/boutique/public/payment/success
         $protocol = 'http';
         if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']){ //si dans l'URL c'est ecrit HTTPs alors le protocol prend cette valeur
             $protocol = 'https';
         }
         $serverName = $_SERVER['SERVER_NAME'];
-        $succesUrl = $protocol . '://' . $serverName . '/Symfony/code/boutique/public/payment/succes/{CHECKOUT_SESSION_ID}';
+        $successUrl = $protocol . '://' . $serverName . '/Symfony/code/boutique/public/payment/success/{CHECKOUT_SESSION_ID}';
         // $protocol = http / $serverName = localhost/Symfony/code/boutique/public/ 
 
         // 2. cancel URL 
@@ -64,7 +64,7 @@ class PaymentService
         }
 
         $sessionId = $this->stripe->checkout->sessions->create([
-            'success_url' => $succesUrl,
+            'success_url' => $successUrl,
             'cancel_url' => $cancelUrl,
             'payment_method_types' => ['card'],
             'mode' => 'payment',

@@ -2,15 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\BookRepository;
+use App\Repository\CommandeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=BookRepository::class)
+ * @ORM\Entity(repositoryClass=CommandeRepository::class)
  */
-class Book
+class Commande
 {
     /**
      * @ORM\Id
@@ -20,22 +20,17 @@ class Book
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="datetime_immutable")
      */
-    private $titre;
+    private $created_at;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $description;
+    private $reference;
 
     /**
-     * @ORM\Column(type="float")
-     */
-    private $price;
-
-    /**
-     * @ORM\OneToMany(targetEntity=CommandeDetail::class, mappedBy="book", orphanRemoval=true ,cascade={"persist"})
+     * @ORM\OneToMany(targetEntity=CommandeDetail::class, mappedBy="commande" ,cascade={"persist"})
      */
     private $commandeDetails;
 
@@ -49,38 +44,26 @@ class Book
         return $this->id;
     }
 
-    public function getTitre(): ?string
+    public function getCreatedAt(): ?\DateTimeImmutable
     {
-        return $this->titre;
+        return $this->created_at;
     }
 
-    public function setTitre(string $titre): self
+    public function setCreatedAt(\DateTimeImmutable $created_at): self
     {
-        $this->titre = $titre;
+        $this->created_at = $created_at;
 
         return $this;
     }
 
-    public function getDescription(): ?string
+    public function getReference(): ?string
     {
-        return $this->description;
+        return $this->reference;
     }
 
-    public function setDescription(string $description): self
+    public function setReference(string $reference): self
     {
-        $this->description = $description;
-
-        return $this;
-    }
-
-    public function getPrice(): ?float
-    {
-        return $this->price;
-    }
-
-    public function setPrice(float $price): self
-    {
-        $this->price = $price;
+        $this->reference = $reference;
 
         return $this;
     }
@@ -97,7 +80,7 @@ class Book
     {
         if (!$this->commandeDetails->contains($commandeDetail)) {
             $this->commandeDetails[] = $commandeDetail;
-            $commandeDetail->setBook($this);
+            $commandeDetail->setCommande($this);
         }
 
         return $this;
@@ -107,8 +90,8 @@ class Book
     {
         if ($this->commandeDetails->removeElement($commandeDetail)) {
             // set the owning side to null (unless already changed)
-            if ($commandeDetail->getBook() === $this) {
-                $commandeDetail->setBook(null);
+            if ($commandeDetail->getCommande() === $this) {
+                $commandeDetail->setCommande(null);
             }
         }
 

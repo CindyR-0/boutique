@@ -2,18 +2,21 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Service\CommandeService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class PaymentController extends AbstractController
 {
     /**
-     * @Route("/payment/succes/{stripeSessionId}", name="payment_succes")
+     * @Route("/payment/success/{stripeSessionId}", name="payment_success")
      */
-    public function succes(string $stripeSessionId): Response
+    public function succes(string $stripeSessionId, CommandeService $commandeService): Response
     { //
-        return $this->render('payment/succes.html.twig', [
+        $commandeService->create($stripeSessionId);
+
+        return $this->render('payment/success.html.twig', [
             'controller_name' => 'PaymentController',
         ]);
     }
